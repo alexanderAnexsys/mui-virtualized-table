@@ -209,6 +209,7 @@ class MuiTable extends Component {
       onHeaderClick,
       onCellClick,
       resizable,
+      expandedRow,
       cellProps: defaultCellProps
     } = this.props;
 
@@ -295,6 +296,7 @@ class MuiTable extends Component {
         }
         onClick={
           !isHeader &&
+          expandedRow &&
           (event => {
             event.stopPropagation();
             rowData.expanded = !rowData.expanded;
@@ -399,6 +401,7 @@ class MuiTable extends Component {
       style,
       theme,
       resizable,
+      expandedRow,
       ...props
     } = this.props;
 
@@ -436,8 +439,10 @@ class MuiTable extends Component {
         {...props}
       >
         <MultiGrid
-          cellRangeRenderer={props => cellRangeRenderer({ ...props, data })}
-          cellRenderer={this.cellRenderer}
+          cellRangeRenderer={props =>
+            cellRangeRenderer({ ...props, data, expandedRow })
+          }
+          cellRenderer={props => this.cellRenderer({ ...props, expandedRow })}
           ref={el => (this.multiGrid = el)}
           width={width}
           columnWidth={
@@ -449,7 +454,7 @@ class MuiTable extends Component {
           fixedColumnCount={fixedColumnCount}
           enableFixedColumnScroll={fixedColumnCount > 0}
           height={multiGridHeight}
-          rowHeight={this.rowHeight}
+          rowHeight={expandedRow ? this.rowHeight : rowHeight}
           rowCount={
             Array.isArray(data) ? data.length + (includeHeaders ? 1 : 0) : 0
           }

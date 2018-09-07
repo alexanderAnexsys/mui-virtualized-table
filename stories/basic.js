@@ -1111,6 +1111,39 @@ storiesOf('Resizable Columns', module).add('Simple table', () => {
   );
 });
 
+storiesOf('Expandable Rows', module).add('Simple table', () => {
+  const data = createPersonData(1000);
+  return (
+    <div style={{ height: 'calc(100vh)' }}>
+      <AutoSizer>
+        {({ width, height }) => (
+          <MuiTable
+            expandedRow={<div> hello </div>}
+            data={data}
+            columns={[
+              {
+                name: 'fullName',
+                header: 'Name',
+                // width: 180,
+                cell: d => `${d.firstName} ${d.lastName}`,
+                cellProps: { style: { paddingRight: 0 } }
+              },
+              { name: 'jobTitle', header: 'Job Title', width: 10 },
+              { name: 'jobArea', header: 'Job Area' }
+            ]}
+            width={width}
+            resizable
+            maxHeight={height}
+            includeHeaders={true}
+            fixedRowCount={1}
+            style={{ backgroundColor: 'white' }}
+          />
+        )}
+      </AutoSizer>
+    </div>
+  );
+});
+
 storiesOf('Examples', module)
   .add('dessert', () => {
     const data = createDessertData();

@@ -21,6 +21,7 @@ export default function defaultCellRangeRenderer({
   verticalOffsetAdjustment,
   visibleColumnIndices,
   visibleRowIndices,
+  expandedRow,
   data
 }) {
   const renderedCells = [];
@@ -137,17 +138,19 @@ export default function defaultCellRangeRenderer({
 
       renderedCells.push(renderedCell);
     }
-    data[rowIndex].expanded &&
-      renderedCells.push(
-        <div
-          style={{
-            position: 'absolute',
-            top: rowDatum.offset - 50 + verticalOffsetAdjustment
-          }}
-        >
-          hel
-        </div>
-      );
+    if (expandedRow) {
+      data[rowIndex].expanded &&
+        renderedCells.push(
+          <div
+            style={{
+              position: 'absolute',
+              top: rowDatum.offset - 150 + verticalOffsetAdjustment
+            }}
+          >
+            {expandedRow}
+          </div>
+        );
+    }
   }
 
   return renderedCells;
