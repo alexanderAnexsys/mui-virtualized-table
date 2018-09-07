@@ -88,6 +88,8 @@ export const styles = theme => ({
   },
   cellContents: {
     width: '100%',
+    height: '100%',
+    paddingTop: '10px',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'

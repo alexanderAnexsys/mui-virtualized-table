@@ -137,6 +137,17 @@ export default function defaultCellRangeRenderer({
 
       renderedCells.push(renderedCell);
     }
+    data[rowIndex].expanded &&
+      renderedCells.push(
+        <div
+          style={{
+            position: 'absolute',
+            top: rowDatum.offset - 50 + verticalOffsetAdjustment
+          }}
+        >
+          hel
+        </div>
+      );
   }
 
   return renderedCells;
