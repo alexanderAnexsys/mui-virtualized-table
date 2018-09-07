@@ -282,6 +282,7 @@ class MuiTable extends Component {
     });
 
     const hasCellClick = !isHeader && onCellClick;
+    const hasCellExpandClick = !isHeader && expandedRow;
 
     return (
       <TableCell
@@ -294,22 +295,20 @@ class MuiTable extends Component {
         onMouseLeave={() =>
           this.setState({ hoveredColumn: null, hoveredRowData: null })
         }
-        onClick={
-          !isHeader &&
-          expandedRow &&
-          (event => {
-            event.stopPropagation();
-            rowData.expanded = !rowData.expanded;
-            this.multiGrid.recomputeGridSize(0, rowIndex);
-            // List.recomputeRowHeights();
-            // List.forceUpdate();
-          })
-        }
         style={{
           ...style,
           ...cellStyle,
           ...((hasCellClick || column.onClick) && { cursor: 'pointer' })
         }}
+        {...hasCellExpandClick && {
+          onClick: event => {
+            event.stopPropagation();
+            rowData.expanded = !rowData.expanded;
+            this.multiGrid.recomputeGridSize(0, rowIndex);
+            // List.recomputeRowHeights();
+            // List.forceUpdate();
+          }
+        }} // Can be overridden by cellProps.onClick on column definition
         {...hasCellClick && {
           onClick: () => onCellClick(column, rowData)
         }} // Can be overridden by cellProps.onClick on column definition
