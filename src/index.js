@@ -10,10 +10,16 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Draggable from 'react-draggable';
+import defaultCellRangeRenderer from './defaultCellRangeRenderer';
 
 import { calcColumnWidth } from './utils';
 
 const FOOTER_BORDER_HEIGHT = 1;
+
+function cellRangeRenderer(props) {
+  const children = defaultCellRangeRenderer(props);
+  return children;
+}
 
 export const styles = theme => ({
   table: {
@@ -155,6 +161,7 @@ class MuiTable extends Component {
       hoveredRowData: null,
       widths
     };
+    this.rowHeight = this.rowHeight.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -208,7 +215,7 @@ class MuiTable extends Component {
     const column = columns[columnIndex];
     const isHeader = includeHeaders && rowIndex === 0;
     const headerOffset = includeHeaders ? 1 : 0;
-    const rowData = (data && data[rowIndex - headerOffset]) || {};
+    const rowData = (data && data[rowIndex]) || {};
 
     const isSelected = isCellSelected && isCellSelected(column, rowData);
 
@@ -284,6 +291,16 @@ class MuiTable extends Component {
         onMouseLeave={() =>
           this.setState({ hoveredColumn: null, hoveredRowData: null })
         }
+        onClick={
+          !isHeader &&
+          (event => {
+            event.stopPropagation();
+            rowData.expanded = !rowData.expanded;
+            this.multiGrid.recomputeGridSize(0, rowIndex);
+            // List.recomputeRowHeights();
+            // List.forceUpdate();
+          })
+        }
         style={{
           ...style,
           ...cellStyle,
@@ -343,6 +360,16 @@ class MuiTable extends Component {
   resizableColumnWidths(index, columns, tableWidth) {
     const column = columns[index];
     return this.state.widths[column.name] * this.props.width;
+  }
+
+  rowHeight(params) {
+    const { data } = this.props;
+    const item = data[params.index];
+    if (item.expanded) {
+      return 200;
+    } else {
+      return 48;
+    }
   }
 
   render() {
@@ -407,6 +434,7 @@ class MuiTable extends Component {
         {...props}
       >
         <MultiGrid
+          cellRangeRenderer={props => cellRangeRenderer({ ...props, data })}
           cellRenderer={this.cellRenderer}
           ref={el => (this.multiGrid = el)}
           width={width}
@@ -419,7 +447,7 @@ class MuiTable extends Component {
           fixedColumnCount={fixedColumnCount}
           enableFixedColumnScroll={fixedColumnCount > 0}
           height={multiGridHeight}
-          rowHeight={rowHeight}
+          rowHeight={this.rowHeight}
           rowCount={
             Array.isArray(data) ? data.length + (includeHeaders ? 1 : 0) : 0
           }
